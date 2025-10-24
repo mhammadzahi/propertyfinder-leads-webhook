@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Request, Header
+from fastapi import FastAPI, Request, Header, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi import FastAPI, Request, HTTPException
+
 
 import json, os
 from datetime import datetime
@@ -8,10 +8,14 @@ from dotenv import load_dotenv
 
 from functions.database import insert_lead
 
+import hmac, hashlib
+
 
 load_dotenv()
 
 app = FastAPI()
+
+
 
 DB_CONFIG = {
     "host": os.getenv("DB_HOST"),
@@ -21,19 +25,22 @@ DB_CONFIG = {
     "password": os.getenv("DB_PASSWORD")
 }
 
-
-app = FastAPI()
+WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 
 @app.post("/pf/lead-created")
-async def handle_lead_created(request: Request, authorization: str = Header(None)):
-    # Step 1: Verify JWT token (if required by PF setup)
-    # if authorization != "Bearer YOUR_SECRET_JWT_TOKEN":
-    #     return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+async def pf_lead_created(request: Request):
 
-    # Step 2: Parse JSON payload
+    signature = request.headers.get("X-Signature")
+    if signature:
+        computed = hmac.new(WEBHOOK_SECRET.encode(), str(payload).encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(signature, computed):
+            return JSONResponse({"error": "Invalid signature"}, status_code=401)
+
+
     payload = await request.json()
+    print(payload)
 
-    # Step 3: Handle the lead data
+
     lead_id = payload.get("id")
     lead_type = payload.get("type")
     timestamp = payload.get("timestamp")
@@ -50,19 +57,15 @@ async def handle_lead_created(request: Request, authorization: str = Header(None
     print(f"Listing ID: {listing_id}")
     print(f"Contacts: {contact_list}")
 
-    # Step 4: Save to database or trigger your workflow here
-    # save_to_db(data)
-    insert_lead(payload, DB_CONFIG)
+    #insert_lead(payload, DB_CONFIG)
 
     return JSONResponse(status_code=200, content={"status": "received"})
-
 
 
 
 @app.get("/")
 def read_root():
     return {"message": "PF Webhook, V1.1.0"}
-
 
 if __name__ == "__main__":# or Run using: uvicorn cg-webhook:app --host 0.0.0.0 --port 8007 --reload
     import uvicorn
