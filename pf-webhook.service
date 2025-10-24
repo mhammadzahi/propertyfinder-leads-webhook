@@ -5,11 +5,11 @@ After=network.target
 
 [Service]
 User=mohammad
-WorkingDirectory=/home/mohammad/pf-webhook
-ExecStart=/bin/bash -c 'source /home/mohammad/pf-webhook/env/bin/activate && python pf-webhook.py'
+WorkingDirectory=/home/mohammad/propertyfinder-leads-webhook
+ExecStart=/bin/bash -c 'source /home/mohammad/propertyfinder-leads-webhook/env/bin/activate && python pf-webhook.py'
 Restart=always
-StandardOutput=append:/home/mohammad/pf-webhook/pf-webhook.log
-StandardError=append:/home/mohammad/pf-webhook/error-pf-webhook.log
+StandardOutput=append:/home/mohammad/propertyfinder-leads-webhook/pf-webhook.log
+StandardError=append:/home/mohammad/propertyfinder-leads-webhook/error-pf-webhook.log
 
 [Install]
 WantedBy=multi-user.target
