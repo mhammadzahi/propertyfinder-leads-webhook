@@ -29,6 +29,8 @@ WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 
 @app.post("/pf/lead-created")
 async def pf_lead_created(request: Request):
+    payload = await request.json()
+    print(payload)
 
     signature = request.headers.get("X-Signature")
     if signature:
@@ -37,27 +39,51 @@ async def pf_lead_created(request: Request):
             return JSONResponse({"error": "Invalid signature"}, status_code=401)
 
 
-    payload = await request.json()
-    print(payload)
-
-
     lead_id = payload.get("id")
     lead_type = payload.get("type")
     timestamp = payload.get("timestamp")
     entity = payload.get("entity", {})
     data = payload.get("payload", {})
 
-    # Example extracted info
-    sender_name = data.get("sender", {}).get("name")
-    contact_list = data.get("sender", {}).get("contacts", [])
-    listing_id = data.get("listing", {}).get("id")
+    entity_id = entity.get("id")
+    entity_type = entity.get("type")
+
     channel = data.get("channel")
+    status = data.get("status")
+    entity_type_detail = data.get("entityType")
+    public_profile_id = data.get("publicProfile", {}).get("id")
+    listing_id = data.get("listing", {}).get("id")
+    listing_reference = data.get("listing", {}).get("reference")
+    project_id = data.get("project", {}).get("id")
+    developer_id = data.get("developer", {}).get("id")
+    response_link = data.get("responseLink")
 
-    print(f"New lead received: {lead_id} from {sender_name} via {channel}")
-    print(f"Listing ID: {listing_id}")
-    print(f"Contacts: {contact_list}")
+    sender = data.get("sender", {})
+    sender_name = sender.get("name")
+    contacts = sender.get("contacts", [])
+    sender_phone = contacts[0]["value"] if contacts else None
 
-    #insert_lead(payload, DB_CONFIG)
+
+
+    success = insert_lead({
+        "lead_id": lead_id,
+        "lead_type": lead_type,
+        "timestamp": timestamp,
+        "entity_id": entity_id,
+        "entity_type": entity_type,
+        "channel": channel,
+        "status": status,
+        "entity_type_detail": entity_type_detail,
+        "public_profile_id": public_profile_id,
+        "listing_id": listing_id,
+        "listing_reference": listing_reference,
+        "project_id": project_id,
+        "developer_id": developer_id,
+        "response_link": response_link,
+        "sender_name": sender_name,
+        "sender_phone": sender_phone
+    }, DB_CONFIG)
+
 
     return JSONResponse(status_code=200, content={"status": "received"})
 
