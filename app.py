@@ -6,7 +6,7 @@ from functions.csv_generator import save_to_csv
 from functions.listing import get_listing_by_id
 from functions.s3_downloader import download_all_from_csv
 
-from functions.webhook import subscribe_to_webhook
+#from functions.webhook import subscribe_to_webhook
 
 
 load_dotenv()
@@ -16,7 +16,6 @@ api_secret = os.getenv("API_SECRET")
 
 
 access_token = get_propertyfinder_token(api_key, api_secret)
-print(access_token)
 
 
 # def get_column_values(file_path, column_name):
@@ -39,20 +38,4 @@ print(access_token)
 #     #print(pagination)
 
 #     save_to_csv(data, "listings_from_leads.csv")
-
-
-# get leads from property finder and save to csv
-# for i in range(183, 201):
-    # access_token = get_propertyfinder_token(api_key, api_secret)
-    # time.sleep(7)
-    #data, pagination = get_propertyfinder_leads(access_token, page=i, page_size=50) # 2
-
-    
-    # print("data:", data)
-    # print("pagination:", pagination)
-
-    # save_to_csv(data, "propertyfinder_leads_3.csv")
-    # time.sleep(5)
-
-    # download_all_from_csv("propertyfinder_leads_3.csv", url_column="call.recordFile", save_dir="recordings", force_download=False)
 
