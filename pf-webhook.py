@@ -4,6 +4,8 @@ import json, os
 
 from dotenv import load_dotenv
 load_dotenv()
+LAMBDA_URL = os.getenv("LAMBDA_URL")
+LAMBDA_API_KEY = os.getenv("LAMBDA_API_KEY")
 
 
 from functions.get_tocken import get_propertyfinder_token
@@ -11,12 +13,7 @@ from functions.listing import get_listing_by_id
 from functions.send_to_lambda import send_to_lambda
 
 
-
 app = FastAPI()
-
-
-LAMBDA_URL = os.getenv("LAMBDA_URL")
-LAMBDA_API_KEY = os.getenv("LAMBDA_API_KEY")
 
 
 
@@ -76,7 +73,7 @@ async def pf_lead_created(request: Request):
 
 @app.get("/")
 def read_root():
-    return {"message": "PF Webhook, V1.2.0"}
+    return {"message": "PF Webhook, V2.1.0"}
 
 if __name__ == "__main__":# or Run using: uvicorn cg-webhook:app --host 0.0.0.0 --port 8007 --reload
     import uvicorn
