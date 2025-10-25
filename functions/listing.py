@@ -3,22 +3,11 @@ import requests, time
 
 
 
-def get_listing_by_id(ACCESS_TOKEN, LISTING_ID, categories=None, offeringTypes=None):
-    time.sleep(1)
 
-    if categories is None:
-        categories = ["residential"]
-    if offeringTypes is None:
-        offeringTypes = ["rent"]
-
+def get_listing_by_id(ACCESS_TOKEN, LISTING_ID):
+    time.sleep(2)
     url = "https://atlas.propertyfinder.com/v1/listings"
-    params = {
-        "filter[ids]": LISTING_ID,
-        "categories": categories,
-        "offeringTypes": offeringTypes,
-        "page": 1,
-        "perPage": 10
-    }
+    params = {"filter[ids]": LISTING_ID}
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
         "Accept": "application/json"
@@ -30,24 +19,28 @@ def get_listing_by_id(ACCESS_TOKEN, LISTING_ID, categories=None, offeringTypes=N
         return None
 
     data = response.json()
+    #print(data)
+
     listings = data.get("results", [])
+    offering_types = data.get("activeCts", {}).get('offeringTypes', [])
+    if offering_types:
+        print("Offering Types:", offering_types)
 
     cleaned_listings = []
 
     for listing in listings:
-        # Enrich location
+        # Location enrichment
         loc_id = listing.get("location", {}).get("id")
         location_details = get_location_by_id(ACCESS_TOKEN, loc_id) if loc_id else {}
 
-        # Join all image URLs into a single string separated by '*'
+        # Images: join URLs with '*'
         images = listing.get("media", {}).get("images", [])
         images_str = '*'.join([img.get("original", {}).get("url", "") for img in images])
 
-        # Extract only the number from price
+        # Extract price number only
         price_number = None
         if listing.get("price", {}).get("amounts"):
-            amounts = listing["price"]["amounts"]
-            for v in amounts.values():
+            for v in listing["price"]["amounts"].values():
                 if v:
                     price_number = v
                     break
@@ -59,23 +52,21 @@ def get_listing_by_id(ACCESS_TOKEN, LISTING_ID, categories=None, offeringTypes=N
             "community_name": location_details.get("community_name"),
             "sub_community_name": location_details.get("sub_community_name"),
             "bedrooms": listing.get("bedrooms"),
-            "categories": categories,
-            "offeringTypes": offeringTypes,
+            "categories": listing.get("category", []),
+            "offeringTypes": offering_types,
             "price": price_number,
             "images": images_str,
             "reference": listing.get("reference")
         })
 
-    return {
-        "results": cleaned_listings
-    }
+    return cleaned_listings
 
 
 
 
 def get_location_by_id(access_token, location_id):
-    time.sleep(1)
-    
+    time.sleep(2)
+
     url = "https://atlas.propertyfinder.com/v1/locations"
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -108,5 +99,3 @@ def get_location_by_id(access_token, location_id):
         "community_name": community_name,
         "sub_community_name": sub_community_name
     }
-
-

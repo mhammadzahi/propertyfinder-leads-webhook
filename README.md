@@ -131,7 +131,6 @@ curl -X POST http://localhost:8007/pf/lead-created \
 
 ## 👤 Contributors
 - Mohammad Zahi
-- [Your Name Here]
 
 ---
 
