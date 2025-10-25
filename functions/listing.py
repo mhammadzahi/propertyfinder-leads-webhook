@@ -1,6 +1,9 @@
 import requests, time
 
 
+# TODO: add lcoation filter to the listing id function
+# TODO: 
+
 def get_listing_by_id(ACCESS_TOKEN, LISTING_ID):
     time.sleep(1)
     url = "https://atlas.propertyfinder.com/v1/listings"

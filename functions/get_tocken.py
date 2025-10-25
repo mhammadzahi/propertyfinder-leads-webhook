@@ -1,8 +1,8 @@
-import requests
-import time
+import requests, time
 
 def get_propertyfinder_token(api_key: str, api_secret: str):
-    time.sleep(2)
+    time.sleep(1.5)
+    
     url = "https://atlas.propertyfinder.com/v1/auth/token"
 
     headers = {
@@ -19,16 +19,3 @@ def get_propertyfinder_token(api_key: str, api_secret: str):
     response.raise_for_status()  # Raise error if request fails
     return response.json().get("accessToken")
 
-
-
-# if __name__ == "__main__":
-#     from dotenv import load_dotenv
-#     import os
-
-#     load_dotenv()
-
-#     api_key = os.getenv("API_KEY")
-#     api_secret = os.getenv("API_SECRET")
-
-#     result = get_propertyfinder_token(api_key, api_secret)
-#     print(result)
