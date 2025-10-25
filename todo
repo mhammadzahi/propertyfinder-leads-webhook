@@ -1,0 +1,9 @@
+1- to lambda:
+
+	to_lambd = [lead_raw, listing_by_id, agent_by-reference_nbr]
+
+
+
+
+2- CSV to Natalia:
+	get listing by id [merged get_listing() with get_location()]

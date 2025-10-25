@@ -1,13 +1,8 @@
 from fastapi import FastAPI, Request, Header, HTTPException
 from fastapi.responses import JSONResponse
-
-
 import json, os
 from datetime import datetime
 from dotenv import load_dotenv
-
-from functions.database import insert_lead
-
 import hmac, hashlib
 
 
@@ -16,27 +11,28 @@ load_dotenv()
 app = FastAPI()
 
 
-
-DB_CONFIG = {
-    "host": os.getenv("DB_HOST"),
-    "port": os.getenv("DB_PORT"),
-    "dbname": os.getenv("DB_NAME"),
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD")
-}
-
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
+print(WEBHOOK_SECRET)
+
+
 
 @app.post("/pf/lead-created")
 async def pf_lead_created(request: Request):
-    payload = await request.json()
+    # Read raw body (bytes)
+    raw_body = await request.body()
+    payload = json.loads(raw_body.decode("utf-8"))
     print(payload)
 
+    # Verify signature
     signature = request.headers.get("X-Signature")
     if signature:
-        computed = hmac.new(WEBHOOK_SECRET.encode(), str(payload).encode(), hashlib.sha256).hexdigest()
+        computed = hmac.new(WEBHOOK_SECRET.encode(), raw_body, hashlib.sha256).hexdigest()
+
         if not hmac.compare_digest(signature, computed):
+            print("❌ Signature mismatch")
             return JSONResponse({"error": "Invalid signature"}, status_code=401)
+
+    print("✅ Signature verified")
 
 
     lead_id = payload.get("id")
@@ -91,7 +87,7 @@ async def pf_lead_created(request: Request):
 
 @app.get("/")
 def read_root():
-    return {"message": "PF Webhook, V1.1.0"}
+    return {"message": "PF Webhook, V1.2.0"}
 
 if __name__ == "__main__":# or Run using: uvicorn cg-webhook:app --host 0.0.0.0 --port 8007 --reload
     import uvicorn
