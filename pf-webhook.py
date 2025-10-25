@@ -50,6 +50,7 @@ async def pf_lead_created(request: Request):
         "sender_name": payload.get("payload", {}).get("sender", {}).get("name"),
         "sender_phone": (payload.get("payload", {}).get("sender", {}).get("contacts") or [{}])[0].get("value")
     }
+    print(lead_data)
 
     return JSONResponse(status_code=200, content={"status": "received"})
 
