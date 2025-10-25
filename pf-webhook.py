@@ -5,8 +5,9 @@ import json, os
 from dotenv import load_dotenv
 load_dotenv()
 
-# import hmac, hashlib
 
+from functions.get_tocken import get_propertyfinder_token
+from functions.listing import get_listing_by_id
 from functions.send_to_lambda import send_to_lambda
 
 
@@ -14,11 +15,8 @@ from functions.send_to_lambda import send_to_lambda
 app = FastAPI()
 
 
-WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 LAMBDA_URL = os.getenv("LAMBDA_URL")
 LAMBDA_API_KEY = os.getenv("LAMBDA_API_KEY")
-
-# print(WEBHOOK_SECRET)
 
 
 
@@ -27,7 +25,8 @@ async def pf_lead_created(request: Request):
     raw_body = await request.body()
     payload = json.loads(raw_body.decode("utf-8"))
 
-
+    # WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
+    # import hmac, hashlib
     # signature = request.headers.get("X-Signature")
     # if signature:
     #     computed = hmac.new(WEBHOOK_SECRET.encode(), raw_body, hashlib.sha256).hexdigest()
@@ -37,6 +36,7 @@ async def pf_lead_created(request: Request):
     #         return JSONResponse({"error": "Invalid signature"}, status_code=401)
 
     # print("Signature verified")
+
 
     lead_data = {
         "lead_id": payload.get("id"),
@@ -56,9 +56,20 @@ async def pf_lead_created(request: Request):
         "sender_name": payload.get("payload", {}).get("sender", {}).get("name"),
         "sender_phone": (payload.get("payload", {}).get("sender", {}).get("contacts") or [{}])[0].get("value")
     }
-    print(lead_data)
 
-    success = send_to_lambda(lead_data, LAMBDA_URL, LAMBDA_API_KEY)
+    access_token = get_propertyfinder_token(os.getenv("API_KEY"), os.getenv("API_SECRET"))
+    listing_data = (access_token, lead_data["listing_id"].strip())
+    agent_data = get_user_info(lead_data["public_profile_id"], access_token)
+
+    lambda_data = {
+        "lead_data": lead_data,
+        "listing_data": listing_data,
+        "agent_data": agent_data
+    }
+
+    success = send_to_lambda(lambda_data, LAMBDA_URL, LAMBDA_API_KEY)
+    print(f"Send to Lambda success: {success}")
+
     return JSONResponse(status_code=200, content={"status": "received"})
 
 
