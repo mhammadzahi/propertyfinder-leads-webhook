@@ -1,7 +1,7 @@
 1- CSV to Natalia:
 	get listing by id [merged get_listing() with get_location()]
 
-
+	# done but we have probelm with no null response from API
 
 
 

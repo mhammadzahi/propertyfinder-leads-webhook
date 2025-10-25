@@ -1,17 +1,23 @@
 from fastapi import FastAPI, Request, Header, HTTPException
 from fastapi.responses import JSONResponse
 import json, os
-from datetime import datetime
+
 from dotenv import load_dotenv
+load_dotenv()
+
 # import hmac, hashlib
 
+from functions.send_to_lambda import send_to_lambda
 
-load_dotenv()
+
 
 app = FastAPI()
 
 
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
+LAMBDA_URL = os.getenv("LAMBDA_URL")
+LAMBDA_API_KEY = os.getenv("LAMBDA_API_KEY")
+
 # print(WEBHOOK_SECRET)
 
 
@@ -52,6 +58,7 @@ async def pf_lead_created(request: Request):
     }
     print(lead_data)
 
+    success = send_to_lambda(lead_data, LAMBDA_URL, LAMBDA_API_KEY)
     return JSONResponse(status_code=200, content={"status": "received"})
 
 
