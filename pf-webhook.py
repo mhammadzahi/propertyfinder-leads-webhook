@@ -10,11 +10,11 @@ LAMBDA_API_KEY = os.getenv("LAMBDA_API_KEY")
 
 from functions.get_tocken import get_propertyfinder_token
 from functions.listing import get_listing_by_id
+from functions.agent import get_agent_info
 from functions.send_to_lambda import send_to_lambda
 
 
 app = FastAPI()
-
 
 
 @app.post("/pf/lead-created")
@@ -56,18 +56,24 @@ async def pf_lead_created(request: Request):
 
     access_token = get_propertyfinder_token(os.getenv("API_KEY"), os.getenv("API_SECRET"))
     listing_data = (access_token, lead_data["listing_id"].strip())
-    agent_data = get_user_info(lead_data["public_profile_id"], access_token)
+    agent_data = get_agent_info(lead_data["public_profile_id"], access_token)
 
     lambda_data = {
         "lead_data": lead_data,
         "listing_data": listing_data,
         "agent_data": agent_data
     }
+    print(lambda_data)
 
-    success = send_to_lambda(lambda_data, LAMBDA_URL, LAMBDA_API_KEY)
-    print(f"Send to Lambda success: {success}")
+    # success = send_to_lambda(lambda_data, LAMBDA_URL, LAMBDA_API_KEY)
+    # print(f"Send to Lambda success: {success}")
 
     return JSONResponse(status_code=200, content={"status": "received"})
+
+
+
+
+
 
 
 
