@@ -55,7 +55,7 @@ async def pf_lead_created(request: Request):
     }
 
     access_token = get_propertyfinder_token(os.getenv("API_KEY"), os.getenv("API_SECRET"))
-    listing_data = (access_token, lead_data["listing_id"].strip())
+    listing_data = get_listing_by_id(access_token, lead_data["listing_id"].strip())
     agent_data = get_agent_info(lead_data["public_profile_id"], access_token)
 
     lambda_data = {
@@ -75,11 +75,9 @@ async def pf_lead_created(request: Request):
 
 
 
-
-
 @app.get("/")
 def read_root():
-    return {"message": "PF Webhook, V2.1.0"}
+    return {"message": "PF Webhook, V2.2.0"}
 
 if __name__ == "__main__":# or Run using: uvicorn cg-webhook:app --host 0.0.0.0 --port 8007 --reload
     import uvicorn

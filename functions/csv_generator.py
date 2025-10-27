@@ -1,6 +1,4 @@
-import os
-import csv
-import json
+import os, csv, json
 from collections.abc import MutableMapping
 
 
@@ -72,3 +70,23 @@ def save_to_csv(data, filename="propertyfinder_listings.csv", schema_file="prope
 
     print(f"✅ Appended {len(flattened_data)} records to '{filename}' "
           f"({'created' if not file_exists else 'updated'}).")
+
+
+
+# -----------------------------------------------------------------------------------------------------
+
+
+def generate_listing_by_id(filepath, val1, val2, val3):
+    # Check if file already exists
+    file_exists = os.path.isfile(filepath)
+
+    # Open file in append mode
+    with open(filepath, mode='a', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+
+        # If file does not exist, write the header first
+        if not file_exists:
+            writer.writerow(["listing_id", "row_number", "listing_data"])
+
+        # Write the passed values
+        writer.writerow([val1, val2, val3])
