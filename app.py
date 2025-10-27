@@ -24,10 +24,10 @@ for listing_id in listing_ids:
     access_token = get_propertyfinder_token(api_key, api_secret)
     data = get_listing_by_id(access_token, listing_id.strip())
 
-    save_to_csv(data, "listings_with_location_2.csv")
+    save_to_csv(data, "listings_with_location_3.csv")
 
     if data:
-        generate_listing_by_id("listing_by_id_2.csv", listing_id, i, json.dumps(data))
+        generate_listing_by_id("listing_by_id_3.csv", listing_id, i, json.dumps(data))
         i += 1
         
     else:

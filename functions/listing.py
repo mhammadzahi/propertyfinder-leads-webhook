@@ -19,7 +19,8 @@ def get_listing_by_id(ACCESS_TOKEN, LISTING_ID):
         return None
 
     data = response.json()
-    #print(data)
+    # print("-- - --   --- -- -- ---   --- -- ----  -- ---  --- --- - --")
+    # print(data)
 
     listings = data.get("results", [])
     offering_types = data.get("activeCts", {}).get('offeringTypes', [])
