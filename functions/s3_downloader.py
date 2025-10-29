@@ -44,7 +44,7 @@ def download_file(url, file_name, save_dir, force_download, retries):
 
 
 
-def download_all_from_csv(csv_file, url_column="call.recordFile", save_dir="recordings", force_download=False):
+def download_all_from_csv(csv_file, url_column, save_dir, force_download):
     """
     Read CSV and download all files using row_number as filename.
     Skips rows which already exist in `save_dir` BEFORE starting downloads,
