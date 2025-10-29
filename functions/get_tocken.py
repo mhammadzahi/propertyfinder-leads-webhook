@@ -1,7 +1,7 @@
 import requests, time
 
 def get_propertyfinder_token(api_key: str, api_secret: str):
-    time.sleep(1.5)
+    time.sleep(2)
     
     url = "https://atlas.propertyfinder.com/v1/auth/token"
 

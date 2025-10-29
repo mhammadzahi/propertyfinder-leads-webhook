@@ -1,6 +1,7 @@
-import requests
+import requests, time
 
-def get_propertyfinder_leads(access_token: str, page: int, page_size: int):
+def get_leads(access_token: str, page: int, page_size: int):
+    time.sleep(2)
     url = "https://atlas.propertyfinder.com/v1/leads"
 
     headers = {

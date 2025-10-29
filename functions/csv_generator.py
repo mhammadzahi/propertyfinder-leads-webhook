@@ -16,7 +16,7 @@ def flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
     return dict(items)
 
 
-def save_to_csv(data, filename="propertyfinder_listings.csv", schema_file="propertyfinder_schema.json"):
+def save_to_csv(data, filename, schema_file="propertyfinder_schema.json"):
     """
     Save Property Finder data into a CSV file with a stable column structure.
     - First run: creates CSV + schema.
@@ -73,10 +73,7 @@ def save_to_csv(data, filename="propertyfinder_listings.csv", schema_file="prope
 
 
 
-# -----------------------------------------------------------------------------------------------------
-
-
-def generate_listing_by_id(filepath, val1, val2, val3):
+def generate_listing_by_id(filepath, val1, val2, val3):# Natalia mapping
     # Check if file already exists
     file_exists = os.path.isfile(filepath)
 
