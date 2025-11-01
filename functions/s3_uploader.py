@@ -31,10 +31,7 @@ def create_a_bucket(bucket_name):
     )
 
     try:
-        s3.create_bucket(
-            Bucket=bucket_name,
-            CreateBucketConfiguration={'LocationConstraint': 'ap-south-1'}
-        )
+        s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={'LocationConstraint': 'ap-south-1'})
 
         # Remove all block-public-access settings
         s3.delete_public_access_block(Bucket=bucket_name)
@@ -99,7 +96,7 @@ def upload_file_to_s3(bucket_name, file_path):
 # ----------------------------------------------------------------------
 # Upload all .mp3 files in directory
 # ----------------------------------------------------------------------
-def upload_mp3_directory(directory_path):
+def main_upload(directory_path):
     if not os.path.isdir(directory_path):
         print(f"❌ Invalid directory: {directory_path}")
         return []
@@ -135,5 +132,5 @@ def upload_mp3_directory(directory_path):
 
 
 
-if __name__ == "__main__":
-    upload_mp3_directory("recordings")
+# if __name__ == "__main__":
+#     main_upload("recordings")
